@@ -1,0 +1,248 @@
+# INSTRUCTIONS D'INSTALLATION ET D'EXÉCUTION
+# Projet de Détection d'Anomalies - Comparaison VAE, Deep SVDD et SVDD Traditionnel
+
+## PRÉREQUIS SYSTÈME
+- Python 3.7 ou supérieur
+- pip (gestionnaire de paquets Python)
+- Au moins 4 GB de RAM disponible
+- GPU NVIDIA avec CUDA (optionnel, pour de meilleures performances)
+
+## INSTALLATION ÉTAPE PAR ÉTAPE
+
+### Étape 1: Créer un environnement virtuel (FORTEMENT RECOMMANDÉ)
+
+**Windows:**
+```cmd
+# Ouvrir l'invite de commande (cmd) ou PowerShell
+python -m venv anomaly_detection_env
+anomaly_detection_env\Scripts\activate
+```
+
+**macOS/Linux:**
+```bash
+# Ouvrir le terminal
+python3 -m venv anomaly_detection_env
+source anomaly_detection_env/bin/activate
+```
+
+**Vérification de l'activation:**
+Votre invite de commande doit maintenant afficher `(anomaly_detection_env)` au début.
+
+### Étape 2: Mettre à jour pip
+```bash
+python -m pip install --upgrade pip
+```
+
+### Étape 3: Installer les dépendances
+
+**Option A - Installation automatique (recommandée):**
+```bash
+pip install -r requirements.txt
+```
+
+**Option B - Installation manuelle:**
+```bash
+pip install torch torchvision torchaudio
+pip install numpy scipy
+pip install scikit-learn
+pip install matplotlib seaborn
+pip install tqdm pillow
+```
+
+### Étape 4: Installation spécifique de PyTorch (si problèmes)
+
+Visitez https://pytorch.org/get-started/locally/ pour les instructions spécifiques.
+
+**CPU seulement:**
+```bash
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+```
+
+**GPU avec CUDA 11.8:**
+```bash
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+```
+
+**GPU avec CUDA 12.1:**
+```bash
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+```
+
+## STRUCTURE DU PROJET
+```
+anomaly_detection_project/
+│
+├── main.py                    # Script principal à exécuter
+├── requirements.txt           # Liste des dépendances
+├── how_to_install.txt        # Ce fichier d'instructions
+├── resultats_experimentaux.txt # Résultats documentés
+└── data/                     # Dossier créé automatiquement pour MNIST
+```
+
+## VÉRIFICATION DE L'INSTALLATION
+
+### Test 1: Vérifier Python et les packages
+```bash
+python --version
+pip list
+```
+
+### Test 2: Vérifier PyTorch
+```bash
+python -c "import torch; print('PyTorch version:', torch.__version__)"
+```
+
+### Test 3: Vérifier CUDA (si applicable)
+```bash
+python -c "import torch; print('CUDA disponible:', torch.cuda.is_available())"
+```
+
+### Test 4: Vérifier tous les imports
+```bash
+python -c "import torch, torchvision, numpy, sklearn, matplotlib; print('Tous les packages importés avec succès!')"
+```
+
+## EXÉCUTION DU PROGRAMME
+
+### Commande d'exécution
+```bash
+python main.py
+```
+
+### Ce qui va se passer:
+1. **Téléchargement automatique** du dataset MNIST (~50MB)
+2. **Entraînement séquentiel** des trois modèles:
+   - VAE (Variational Autoencoder) - ~83 secondes
+   - Deep SVDD - ~49 secondes  
+   - SVDD Traditionnel - ~4 secondes
+3. **Affichage des résultats** avec métriques détaillées
+4. **Génération de graphiques** comparatifs
+5. **Tableau de comparaison final**
+
+## PARAMÈTRES CONFIGURABLES
+
+Dans le fichier `main.py`, fonction `main()`:
+
+```python
+# Paramètres modifiables
+normal_class = 0      # Classe considérée comme normale (0-9)
+batch_size = 128      # Taille des lots (réduire si problème mémoire)
+epochs = 50           # Nombre d'epochs d'entraînement
+latent_dim = 20       # Dimension latente du VAE
+```
+
+## RÉSULTATS ATTENDUS
+
+### Métriques de performance:
+| Méthode              | AUC   | Précision | Rappel | F1     | Temps (s) |
+|---------------------|-------|-----------|---------|--------|-----------|
+| VAE                 | 0.992 | 1.000     | 0.188   | 0.317  | 82.8      |
+| Deep SVDD           | 0.740 | 0.998     | 0.188   | 0.316  | 48.5      |
+| SVDD Traditionnel   | 0.967 | 0.988     | 0.186   | 0.313  | 4.3       |
+
+### Graphiques générés:
+- Comparaison des métriques (barres)
+- Distribution des scores d'anomalie (histogrammes)
+
+## RÉSOLUTION DES PROBLÈMES COURANTS
+
+### Problème 1: Erreur de mémoire
+```bash
+# Solution: Réduire batch_size dans main.py
+batch_size = 64  # ou même 32
+```
+
+### Problème 2: Erreur d'affichage graphique (serveurs sans GUI)
+```python
+# Ajouter au début de main.py
+import matplotlib
+matplotlib.use('Agg')  # Backend sans interface graphique
+```
+
+### Problème 3: Dataset MNIST corrompu
+```bash
+# Supprimer et retélécharger
+rm -rf data/        # Linux/macOS
+rmdir /s data\      # Windows
+python main.py      # Relancer
+```
+
+### Problème 4: Versions incompatibles
+```bash
+# Désinstaller et réinstaller PyTorch
+pip uninstall torch torchvision torchaudio
+pip install torch torchvision torchaudio
+```
+
+### Problème 5: Permission denied (Windows)
+```cmd
+# Exécuter l'invite de commande en tant qu'administrateur
+# Ou utiliser --user
+pip install --user -r requirements.txt
+```
+
+## OPTIMISATION DES PERFORMANCES
+
+### Pour CPU:
+- Réduire batch_size à 64 ou 32
+- Utiliser moins d'epochs (25-30)
+
+### Pour GPU:
+- Augmenter batch_size à 256 ou 512
+- Augmenter epochs à 100 pour de meilleures performances
+
+### Pour systèmes avec peu de RAM:
+```python
+# Dans main.py, ajuster:
+batch_size = 32
+# Et réduire les dimensions du modèle si nécessaire
+```
+
+## INFORMATIONS SUPPLÉMENTAIRES
+
+### Temps d'exécution moyens:
+- **CPU moderne (8 cores):** ~2-3 minutes total
+- **GPU GTX/RTX:** ~1-2 minutes total
+- **Ancien CPU:** ~5-10 minutes total
+
+### Espace disque requis:
+- Code source: ~5 KB
+- Dataset MNIST: ~50 MB
+- Modèles entraînés: ~5 MB
+- **Total: ~60 MB**
+
+### Reproductibilité:
+Les résultats sont reproductibles grâce aux seeds fixés:
+```python
+torch.manual_seed(42)
+np.random.seed(42)
+```
+
+## SUPPORT ET DOCUMENTATION
+
+### En cas de problème persistant:
+1. Vérifier la version de Python (doit être 3.7+)
+2. Vérifier que l'environnement virtuel est activé
+3. Réinstaller les dépendances depuis zéro
+4. Consulter la documentation PyTorch officielle
+
+### Ressources utiles:
+- Documentation PyTorch: https://pytorch.org/docs/
+- Documentation scikit-learn: https://scikit-learn.org/
+- Problèmes CUDA: https://pytorch.org/get-started/locally/
+
+## COMMANDES DE NETTOYAGE
+
+### Désactiver l'environnement virtuel:
+```bash
+deactivate
+```
+
+### Supprimer l'environnement virtuel:
+```bash
+# Windows
+rmdir /s anomaly_detection_env
+
+# macOS/Linux  
+rm -rf anomaly_detection_env
+```
