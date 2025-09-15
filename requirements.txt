@@ -101,8 +101,27 @@
 L'expérimentation révèle des performances contrastées avec les attentes théoriques. Le VAE démontre une excellence inattendue, tandis que le SVDD traditionnel confirme sa robustesse. Le Deep SVDD présente un potentiel d'amélioration significatif. Le principal défi identifié concerne l'optimisation du rappel pour une détection d'anomalies plus complète.
 
 ## Configuration technique
-- Processeur: [CPU/GPU utilisé]
-- Mémoire: [RAM disponible]
-- Framework: PyTorch
-- Python version: [Version]
-- Reproductibilité: Seeds fixés (torch.manual_seed(42), np.random.seed(42))
+- **Processeur recommandé**: 
+  - CPU: Intel Core i7-14700K / AMD Ryzen 7 7800X3D (pour performances optimales)
+  - GPU: NVIDIA RTX 4070/4080 ou équivalent (optionnel, accélération)
+- **Mémoire**: 16-32 GB RAM recommandé
+- **Framework**: PyTorch 2.5+ avec support CUDA
+- **Python version**: 3.8-3.11
+- **Reproductibilité**: Seeds fixés (torch.manual_seed(42), np.random.seed(42))
+
+## Processeurs couramment utilisés en 2025
+
+### **Pour CPU seulement (mode économique)**
+- Intel Core i7-14700K : Excellent rapport performance/prix pour IA
+- AMD Ryzen 7 7800X3D : Performances élevées avec cache 3D
+- AMD Ryzen 5 7600X : Option abordable, 6 cœurs/12 threads
+
+### **Pour configurations GPU accélérées**
+- Intel Core i9-13900K : 24 cœurs, performances maximales
+- AMD Ryzen 9 7950X3D : 16 cœurs, idéal pour deep learning
+- GPUs recommandés : NVIDIA RTX 4090, A100, H100
+
+### **Temps d'exécution selon configuration**
+- **CPU moderne (Intel i7/AMD Ryzen 7)**: ~2-3 minutes total
+- **GPU RTX 4070+**: ~1-2 minutes total  
+- **Configuration de test**: Probablement CPU Intel/AMD récent sans GPU
