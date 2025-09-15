@@ -1,0 +1,108 @@
+# RÉSULTATS EXPÉRIMENTAUX
+# Projet de Détection d'Anomalies - Comparaison VAE, Deep SVDD et SVDD Traditionnel
+# Dataset: MNIST - Classe normale: 0 (chiffre "0")
+# Date d'exécution: [Date d'exécution]
+
+## Configuration expérimentale
+- Dataset: MNIST
+- Classe considérée comme normale: 0
+- Nombre d'epochs d'entraînement: 50
+- Batch size: 128
+- Dimension latente (VAE): 20
+- Répartition test: 70% normal / 30% anomalies
+- Seuil de détection: 85ème percentile
+
+## Résultats de performance
+
+| Méthode              | AUC   | Précision | Rappel | F1     | Temps (s) |
+|---------------------|-------|-----------|---------|--------|-----------|
+| VAE                 | 0.992 | 1.000     | 0.188   | 0.317  | 82.8      |
+| Deep SVDD           | 0.740 | 0.998     | 0.188   | 0.316  | 48.5      |
+| SVDD Traditionnel   | 0.967 | 0.988     | 0.186   | 0.313  | 4.3       |
+
+## Analyse détaillée des résultats
+
+### 1. Performance de classification (AUC)
+- **Meilleure performance: VAE (0.992)**
+  - Excellente capacité à distinguer normal/anomalie
+  - Confirme l'efficacité des autoencodeurs variationnels
+
+- **Deuxième: SVDD Traditionnel (0.967)**
+  - Performance remarquable pour une méthode classique
+  - Bon rapport performance/simplicité
+
+- **Troisième: Deep SVDD (0.740)**
+  - Performance en dessous des attentes
+  - Possibles problèmes d'optimisation ou d'architecture
+
+### 2. Précision
+- Toutes les méthodes atteignent une précision quasi-parfaite (>98.8%)
+- Très peu de faux positifs générés
+- Indique un bon contrôle des fausses alertes
+
+### 3. Rappel et détection d'anomalies
+- **Problème critique identifié**: Rappel très faible pour toutes les méthodes (~18.6-18.8%)
+- Seulement ~19% des vraies anomalies sont détectées
+- Suggère un seuil de détection trop conservateur
+
+### 4. Score F1
+- Scores F1 similaires pour toutes les méthodes (~0.313-0.317)
+- Reflète le déséquilibre entre précision élevée et rappel faible
+- Marge d'amélioration importante via optimisation du seuil
+
+### 5. Efficacité computationnelle
+- **Plus rapide: SVDD Traditionnel (4.3s)**
+  - Avantage significatif en temps de calcul
+  - Idéal pour applications temps réel
+
+- **Intermédiaire: Deep SVDD (48.5s)**
+  - Temps raisonnable pour un modèle deep learning
+
+- **Plus lent: VAE (82.8s)**
+  - Coût computationnel le plus élevé
+  - Justifié par la meilleure performance AUC
+
+## Observations clés
+
+### Résultats inattendus
+1. **VAE surpasse Deep SVDD**: Contrairement aux attentes théoriques
+2. **SVDD traditionnel très compétitif**: Performance proche du VAE
+3. **Deep SVDD sous-performe**: Possible besoin d'optimisation
+
+### Points forts identifiés
+- Excellente précision pour toutes les méthodes
+- VAE offre la meilleure discrimination globale
+- SVDD traditionnel présente le meilleur rapport performance/temps
+
+### Limitations observées
+- Rappel uniformément faible across toutes les méthodes
+- F1-scores modérés dus au déséquilibre précision/rappel
+- Deep SVDD n'atteint pas son potentiel théorique
+
+## Recommandations
+
+### Optimisations immédiates
+1. **Ajustement du seuil de détection**
+   - Tester différents percentiles (75%, 80%, 90%)
+   - Utiliser la validation croisée pour optimiser
+
+2. **Amélioration du Deep SVDD**
+   - Augmenter le nombre d'epochs (100-200)
+   - Ajuster l'architecture du réseau
+   - Optimiser l'initialisation du centre
+
+### Applications pratiques
+- **Pour applications temps réel**: SVDD Traditionnel
+- **Pour précision maximale**: VAE
+- **Pour équilibre**: Optimiser Deep SVDD
+
+## Conclusion
+
+L'expérimentation révèle des performances contrastées avec les attentes théoriques. Le VAE démontre une excellence inattendue, tandis que le SVDD traditionnel confirme sa robustesse. Le Deep SVDD présente un potentiel d'amélioration significatif. Le principal défi identifié concerne l'optimisation du rappel pour une détection d'anomalies plus complète.
+
+## Configuration technique
+- Processeur: [CPU/GPU utilisé]
+- Mémoire: [RAM disponible]
+- Framework: PyTorch
+- Python version: [Version]
+- Reproductibilité: Seeds fixés (torch.manual_seed(42), np.random.seed(42))
